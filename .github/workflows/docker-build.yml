@@ -57,9 +57,9 @@ jobs:
     - name: Get GKE credentials
       uses: google-github-actions/get-gke-credentials@v2
       with:
-        cluster_name: mvc-k8s-cluster
+        cluster_name: mvck8stest-cluster
         location: asia-east1  # 換成你實際設定的區域
-
+        project_id: MvcK8sTest # GCP 專案 ID
     # 正式部署 YAML
     - name: Deploy to GKE
       run: |
