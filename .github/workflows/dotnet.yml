@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET 8 SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.315        #最好用指定版本如8.0.315
+        dotnet-version: 8.0.412        #最好用指定版本如8.0.315
 
     - name: Restore dependencies
       run: dotnet restore
