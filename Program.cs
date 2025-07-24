@@ -3,6 +3,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// 明確指定要監聽 80 port!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+builder.WebHost.ConfigureKestrel(serverOptions =>{serverOptions.ListenAnyIP(80); });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: dev
+data:
+  ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=MvcDb;User=sa;Password=Eagle@SS0315"

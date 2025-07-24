@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mvc-deployment
+  namespace: dev
+  labels:
+    app: mvc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mvc-app
+  template:
+    metadata:
+      labels:
+        app: mvc-app
+    spec:
+      containers:
+      - name: mvc-container
+        image: eaglepop/mvck8stest:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: ConnectionStrings__DefaultConnection
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sql-secret
+              key: SA_PASSWORD
+        - name: ACCEPT_EULA
+          value: "Y"
