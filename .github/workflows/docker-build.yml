@@ -36,13 +36,32 @@ jobs:
     - name: Push Docker image
       run: docker push eaglepop/mvck8stest:latest
 
-    - name: Setup Kubeconfig
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
-        chmod 600 $HOME/.kube/config
+    # - name: Setup Kubeconfig
+    #   run: |
+    #     mkdir -p $HOME/.kube
+    #     echo "${{ secrets.KUBECONFIG }}" | base64 -d > $HOME/.kube/config
+    #     chmod 600 $HOME/.kube/config
 
-    - name: Deploy to Kubernetes
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     kubectl apply -f k8s/
+    #     kubectl rollout restart deployment mvc-deployment -n dev
+
+      # 授權給 GCP（取代 kubeconfig）
+    - name: Auth to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    # 取得 GKE kubeconfig 並寫入 ~/.kube/config
+    - name: Get GKE credentials
+      uses: google-github-actions/get-gke-credentials@v2
+      with:
+        cluster_name: mvc-k8s-cluster
+        location: asia-east1  # 換成你實際設定的區域
+
+    # 正式部署 YAML
+    - name: Deploy to GKE
       run: |
         kubectl apply -f k8s/
         kubectl rollout restart deployment mvc-deployment -n dev
