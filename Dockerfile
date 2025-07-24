@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 8080
 
 # 建構階段 
-FROM mcr.microsoft.com/dotnet/sdk:8.0.315 AS build 
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build 
 WORKDIR /src
 
 # 複製 .csproj 並還原套件
