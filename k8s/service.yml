@@ -1,15 +1,34 @@
+# 部署到 GKE 的服務定義
+# 注意：這裡的 type 改成 LoadBalancer，
+# 這樣 GKE 會自動分配一個外部 IP
+# 並且將流量轉發到你的服務上。
 apiVersion: v1
 kind: Service
 metadata:
   name: mvc-service
   namespace: dev
 spec:
-  type: NodePort
+  type: LoadBalancer  # <== 🔥 最重要！改這行
   selector:
     app: mvc-app
   ports:
-  - port: 80
-    targetPort: 80
-    nodePort: 30080
+    - protocol: TCP
+      port: 80          # 對外 port
+      targetPort: 80    # 容器 port
 
+
+# 本地測試
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mvc-service
+#   namespace: dev
+# spec:
+#   type: NodePort
+#   selector:
+#     app: mvc-app
+#   ports:
+#   - port: 80
+#     targetPort: 80
+#     nodePort: 30080
 
