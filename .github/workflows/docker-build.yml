@@ -89,8 +89,10 @@ jobs:
         location: asia-east1
         project_id: mvck8stest
 
-    - name: Deploy to Kubernetes
+    - name: Deploy to GKE
       run: |
+        kubectl apply -f k8s/ --validate=false || true
+        sleep 5
         kubectl apply -f k8s/
         kubectl rollout restart deployment mvc-deployment -n dev
 #######################WIF OIDC###################################
