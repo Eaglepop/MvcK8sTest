@@ -36,6 +36,7 @@ jobs:
     - name: Push Docker image
       run: docker push eaglepop/mvck8stest:latest
 
+#######################本地測試K8s################################
     # - name: Setup Kubeconfig
     #   run: |
     #     mkdir -p $HOME/.kube
@@ -46,24 +47,45 @@ jobs:
     #   run: |
     #     kubectl apply -f k8s/
     #     kubectl rollout restart deployment mvc-deployment -n dev
+#######################本地測試K8s################################
 
-      # 授權給 GCP（取代 kubeconfig）
-    - name: Auth to GCP
+#######################JSON key###################################
+    #   # 授權給 GCP（取代 kubeconfig）
+    # - name: Auth to GCP
+    #   uses: google-github-actions/auth@v2
+    #   with:
+    #     credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    # # 取得 GKE kubeconfig 並寫入 ~/.kube/config
+    # - name: Get GKE credentials
+    #   uses: google-github-actions/get-gke-credentials@v2
+    #   with:
+    #     cluster_name: mvck8stest-cluster
+    #     location: asia-east1  # 換成你實際設定的區域
+    #     project_id: mvck8stest # GCP 專案 ID
+    # # 正式部署 YAML
+    # - name: Deploy to GKE
+    #   run: |
+    #     kubectl apply -f k8s/
+    #     kubectl rollout restart deployment mvc-deployment -n dev
+#######################JSON key###################################
+
+#######################WIF OIDC###################################
+    - name: Authenticate to Google Cloud (WIF)
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        workload_identity_provider: "projects/1020520420634/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+        service_account: "mvck8stest@mvck8stest.iam.gserviceaccount.com"
 
-    # 取得 GKE kubeconfig 並寫入 ~/.kube/config
     - name: Get GKE credentials
       uses: google-github-actions/get-gke-credentials@v2
       with:
         cluster_name: mvck8stest-cluster
-        location: asia-east1  # 換成你實際設定的區域
-        project_id: mvck8stest # GCP 專案 ID
-    # 正式部署 YAML
-    - name: Deploy to GKE
+        location: asia-east1
+        project_id: mvck8stest
+
+    - name: Deploy to Kubernetes
       run: |
         kubectl apply -f k8s/
         kubectl rollout restart deployment mvc-deployment -n dev
-        
-        
+#######################WIF OIDC###################################
