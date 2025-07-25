@@ -94,3 +94,4 @@ jobs:
         kubectl apply -f k8s/
         kubectl rollout restart deployment mvc-deployment -n dev
 #######################WIF OIDC###################################
+
