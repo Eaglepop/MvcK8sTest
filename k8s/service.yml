@@ -15,7 +15,7 @@ spec:
     - protocol: TCP
       port: 80          # 對外 port
       targetPort: 80    # 容器 port
-      
+      nodePort: 30080
 
 
 # 本地測試
