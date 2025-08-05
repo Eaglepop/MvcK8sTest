@@ -13,3 +13,4 @@ metadata:
   namespace: dev
 data:
   version: "latest"  # This will be updated by CI/CD
+# run this (kubectl config set-context --current --namespace=dev) before checking out the configmap
