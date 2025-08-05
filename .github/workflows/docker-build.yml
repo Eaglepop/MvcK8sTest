@@ -18,6 +18,14 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v3
 
+    - name: Bump version and push tag    #get the version from tag or generate a new one
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.1  # use fix, feat, feat! while committing to bump the version. chore, docs, style, refactor, perf, test will not bump the version.
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        default_bump: patch
+        dry_run: false # Safety check, set to true to test without pushing changes
+
     - name: Set up .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -33,13 +41,20 @@ jobs:
       run: dotnet publish -c Release -o publish_output
 
     - name: Build Docker image
-      run: docker build -t eaglepop/mvck8stest:latest .
+      # Use git tag as version (only if new tag was created)
+      if: steps.tag_version.outputs.new_tag != ''
+      run: docker build -t eaglepop/mvck8stest:${{ steps.tag_version.outputs.new_tag }} .
+      # run: docker build -t eaglepop/mvck8stest:latest .
 
     - name: Log in to Docker Hub
+      if: steps.tag_version.outputs.new_tag != ''
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-    - name: Push Docker image
-      run: docker push eaglepop/mvck8stest:latest
+    - name: Push Docker image 
+      # Use git tag as version (only if new tag was created)
+      if: steps.tag_version.outputs.new_tag != ''
+      run: docker push eaglepop/mvck8stest:${{ steps.tag_version.outputs.new_tag }} 
+      # run: docker push eaglepop/mvck8stest:latest
 
 #######################本地測試K8s################################
     # - name: Setup Kubeconfig
@@ -89,11 +104,14 @@ jobs:
         location: asia-east1
         project_id: mvck8stest
 
-    - name: Deploy to GKE
+    # Use git tag as version in kubectl set image command (only if new tag was created)
+    - name: Deploy to GKE 
+      if: steps.tag_version.outputs.new_tag != ''
       run: |
         kubectl apply -f k8s/ --validate=false || true
         sleep 5
-        kubectl apply -f k8s/
+        kubectl apply -f k8s/ 
+        kubectl set image deployment/mvc-deployment mvc-container=eaglepop/mvck8stest:${{ steps.tag_version.outputs.new_tag }} -n dev  
         kubectl rollout restart deployment mvc-deployment -n dev
 #######################WIF OIDC###################################
 
