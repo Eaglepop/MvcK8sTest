@@ -9,9 +9,9 @@ jobs:
    build-and-push:
     runs-on: ubuntu-latest
 #############Most important for permission in last step################################
-   # Need to add these 3 lines to add "id-token" with the intended permissions.
+   # Need to add these permissions for id-token (GCP) and contents (GitHub tags)
     permissions:
-     contents: 'read'
+     contents: 'write'  # Changed from 'read' to 'write' to allow creating tags
      id-token: 'write'
 #############Most important for permission in last step################################
     steps:
