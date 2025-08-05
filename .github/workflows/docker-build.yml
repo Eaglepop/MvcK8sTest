@@ -104,7 +104,8 @@ jobs:
         location: asia-east1
         project_id: mvck8stest
 
-    # Use git tag as version in kubectl set image command (only if new tag was created)
+    # Use git tag as version in kubectl set image command (run line 4)
+    # Config maps are updated with the new version (run line 5 and the k8s/Configmap.yml)
     - name: Deploy to GKE 
       if: steps.tag_version.outputs.new_tag != ''
       run: |
@@ -112,6 +113,7 @@ jobs:
         sleep 5
         kubectl apply -f k8s/ 
         kubectl set image deployment/mvc-deployment mvc-container=eaglepop/mvck8stest:${{ steps.tag_version.outputs.new_tag }} -n dev  
+        kubectl patch configmap app-version -n dev --patch='{"data":{"version":"${{ steps.tag_version.outputs.new_tag }}"}}'
         kubectl rollout restart deployment mvc-deployment -n dev
 #######################WIF OIDC###################################
 
