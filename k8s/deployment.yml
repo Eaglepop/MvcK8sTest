@@ -27,7 +27,7 @@ spec:
               name: app-config
               key: ConnectionStrings__DefaultConnection
       - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:2022-latest
+        image: mcr.microsoft.com/mssql/server:2022-Ubuntu-22.04
         ports:
         - containerPort: 1433
         env:
