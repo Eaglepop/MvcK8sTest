@@ -6,7 +6,7 @@ builder.WebHost
     {
         serverOptions.ListenAnyIP(80);
     })
-    .UseUrls("http://*:80"); //這行最關鍵，避免 ASPNETCORE_URLS 干擾
+    .UseUrls("http://127.0.0.1:80"); //這行最關鍵，避免 ASPNETCORE_URLS 干擾
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
